@@ -8,7 +8,7 @@ import { AuthContext } from '../../context/AuthContext';
 export default function Feed({username, videoFilter}) {
   const [posts, setPosts]=useState([]);
   const {user}=useContext(AuthContext);
-  //const [user, setUser]=useState(JSON.parse(localStorage.getItem("user")));
+  //const [user, setUser]=useState(JSON.parse(localStorage.getItem("auth-user")));
   /*useEffect(()=>{
       setUser(JSON.parse(localStorage.getItem("user")));
    },[username]);
@@ -32,13 +32,13 @@ export default function Feed({username, videoFilter}) {
         {(!username || username === user.username) && <Share/>}
           
           </div>
-          <div>
+          
           {
             posts.map((p)=>(
               <Post key={p._id} post={p}/>
             ))
           }
-          </div>
+          
         </div>
     )
 }

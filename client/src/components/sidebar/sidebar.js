@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./sidebar.css";
 import {RssFeed, Bookmark, WorkOutline, HelpOutline, School, Event, PlayCircleFilledOutlined, Group,Chat} from '@material-ui/icons';
 import CloseFriend from '../closefriends/closeFriend';
-// import Users from '../../User';
 import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
 
-export default function Sidebar({user, videoFilter, setVideoFilter}) {
+export default function Sidebar({user}) {
     const [friends, setfriends] = useState([]);
     useEffect(()=>{
 
         const getFriends= async () => {
           try{
-    
+            console.log("gettAllFriends")
             const following = await axios.get("/user/following/"+user?._id);
-            const followers = await axios.get("/user/followers/"+user?._id);
-            setfriends(...[...[following.data], ...[followers.data]]);
+            setfriends(following.data);
             //console.log(friendList.data);
         }catch(err){
           console.log(err);
@@ -41,6 +40,7 @@ export default function Sidebar({user, videoFilter, setVideoFilter}) {
              </ul>
              <hr className="sidebarHr"/>
              <ul className="sidebarFriendList">
+              {friends.length>0? <h4>Following</h4>: null}
              {  friends.map((u)=>(<CloseFriend key={u._id} user={u}/>))}
              </ul>
         </div>

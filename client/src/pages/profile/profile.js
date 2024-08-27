@@ -8,19 +8,22 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 
 
-export default function Profile() {
+export default function Profile({user}) {
     const PF=process.env.REACT_APP_PUBLIC_FOLDER;
     const [users, setUsers]=useState({});
     const {username}=useParams();
     console.log(username)
     useEffect(() => {
+      if(username){
         const fetchUsers = async ()=>{
           const res=await axios.get(`/user?username=${username}`);
           console.log("profile ",res.data);
           setUsers(res.data);
         }
         fetchUsers();
+      }
       },[username]);
+      
     return (
        <>
            <Topbar/>

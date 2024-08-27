@@ -1,9 +1,10 @@
 .post{
-    width: 100%;
+    width: 70%;
     border-radius: 10px;
     -webkit-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.68);
     box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.68);
     margin: 30px 30px 0px 0px;
+    align-self: center;
 }
 
 .postWrapper{
@@ -53,7 +54,10 @@
     margin-top: 20px;
     width: 100%;
     max-height: 500px;
-    object-fit:scale-down;
+    object-fit:fill;
+}
+.postImgWrapper{
+    width: 100%;
 }
 
 .postBottom{
@@ -83,4 +87,20 @@
     border-bottom: 1px dashed gray;
     font-size: 15px;
 }
-
+.update-delete-wrapper{
+    background: white;
+    box-shadow: 20px;
+    border-radius: 10px;
+    position: absolute;
+    min-width: 100px;
+}
+.option{
+    padding: 10px;
+    border: 2px solid beige;
+    box-shadow: black;
+    cursor: pointer;
+}
+.postTopRight{
+    cursor: pointer;
+    pointer-events: auto;
+}

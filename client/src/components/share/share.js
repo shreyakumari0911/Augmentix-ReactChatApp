@@ -7,11 +7,6 @@ import { isImage, isVideo } from '../../utils/imageType';
 
 export default function Share() {
     const {user}=useContext(AuthContext);
-    /*const [user, setUser]=useState({});
-    useEffect(()=>{
-       setUser(JSON.parse(localStorage.getItem("user")));
-       console.log(user);
-    }, []);*/
     const PF=process.env.REACT_APP_PUBLIC_FOLDER;
     const desc=useRef();
     const [file, setFile ]= useState(null);
