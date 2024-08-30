@@ -4,6 +4,7 @@ import { Search, ExitToApp, Person, Chat, Notifications } from '@material-ui/ico
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../context/AuthContext';
 import { logoutCall } from '../../apiCalls';
+import {getGoogleDriveImageUrl} from "../../utils/imageType";
 
 export default function Topbar() {
   const { user, dispatch } = useContext(AuthContext);
@@ -43,7 +44,7 @@ export default function Topbar() {
           </div>
           <Link to={`/profile/${user.username}`}>
             <img
-              src={user.ProfilePicture ? PF + user.ProfilePicture : PF + "noProfile.jpg"}
+              src={user.ProfilePicture ? (user.ProfilePicture) : PF + "noProfile.jpg"}
               alt=""
               className="topbarImg"
             />

@@ -16,7 +16,7 @@ export default function Messenger() {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const scrollRef = useRef();
-    const socket = useRef(io("ws://localhost:8900"));
+    const socket = useRef();
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
@@ -54,6 +54,7 @@ export default function Messenger() {
     useEffect(()=>{
         if(selectedFriend){
             initiateLoadChat();
+            console.log("selectedFriend",selectedFriend);
         }
     },[selectedFriend]);
 
@@ -83,9 +84,13 @@ export default function Messenger() {
                 createdAt: Date.now(),
             });
         });
-    }, [selectedFriend]);
+        return () => {
+            socket.current.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
+        console.log("arrival message", arrivalMessage, user)
         if (arrivalMessage && user?._id==arrivalMessage?.receiver) {
             setMessages((prev) => [...prev, arrivalMessage]);
         }
@@ -101,13 +106,13 @@ export default function Messenger() {
       }, [messages]);
 
     useEffect(() => {
-        if(user){
+        // if(){
             socket.current.emit("addUser", user?._id);
             socket.current.on("getUsers", (users) => {
             // setOnlineUsers(user.following.filter((f) => users.some((u) => u?.userId === f)));
         });
-        }
-    }, [user]);
+        // }
+    }, []);
 
     useEffect(() => {
         const getMessages = async () => {
@@ -115,13 +120,14 @@ export default function Messenger() {
                 if (conversationId) {
                     const res = await axios.get(`/messages/${conversationId}`);
                     setMessages(res?.data);
+                    console.log("messages", res?.data)
                 }
             } catch (err) {
                 console.log(err);
             }
         };
         getMessages();
-    }, [conversationId]);
+    }, [conversationId, selectedFriend]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -129,49 +135,55 @@ export default function Messenger() {
         // Check if conversation exists
         console.log("start chatting with", selectedFriend?._id, file);
         // Create and send the message
-        
-        const message = {
-            sender: user?._id,
-            text: newMessage,
-            conversationId
-        };
-        
-        if(file){
-            const data=new FormData();
-            const filename = Date.now()+file.name;
-            data.append("name", filename);
-            data.append("file", file);
-            message.imageUrl=filename;
-            message.type=isImage(filename)?"image": "video"; 
-            try{
-                await axios.post("/upload", data);
-                setFile(null);
-            }catch(err){
-                console.log(err);
-            }
-        }
-
         try {
             const message = {
                 senderId: user?._id,
                 receiverId: selectedFriend?._id,
                 text: newMessage,
             }
+            const saveMessage = {
+                conversationId: conversationId,
+                sender: user?._id,
+                text: newMessage
+            }
             if(file){
                 const data=new FormData();
                 const filename = Date.now()+file.name;
                 data.append("name", filename);
                 data.append("file", file);
-                message.imageUrl=filename;
                 message.type=isImage(filename)?"image": "video";
+                saveMessage.type=isImage(filename)?"image": "video";
+                try{
+                    const res = await axios.post("/upload", data);
+                    if(res.data.message=="Image uploaded and saved successfully" && res.status==200){
+                        message.imageUrl=res.data.fileId;
+                        saveMessage.imageUrl = res.data.fileId;
+                    }
+                    socket.current.emit("sendMessage", message);
+                    const response = await axios.post(`/messages`, saveMessage);
+                    console.log("see message",file, message, messages);
+                    if(response?.data){
+                        setFile(null);
+                        setMessages(prevMessages => [...prevMessages, response?.data]);
+                        setNewMessage(""); // Clear the input field after sending the message
+                        scrollRef.current.scrollIntoView({ behavior: "smooth" });
+                    }
+                    
+                }catch(err){
+                    console.log(err);
+                }
+            }else{
+                socket.current.emit("sendMessage", message);
+                const res = await axios.post(`/messages`, saveMessage);
+                if(res?.data){
+                console.log('see message',file, message, messages);
+                setFile(null);
+                setMessages(prevMessages => [...prevMessages, res?.data]);
+                setNewMessage(""); // Clear the input field after sending the message
+                scrollRef.current.scrollIntoView({ behavior: "smooth" });
+                }
             }
-            socket.current.emit("sendMessage", message);
-
-            const res = await axios.post(`/messages`, message);
-            console.log(file, res);
-            setMessages(prevMessages => [...prevMessages, res?.data]);
-            setNewMessage(""); // Clear the input field after sending the message
-            scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            
         } catch (err) {
             console.log(err);
         }

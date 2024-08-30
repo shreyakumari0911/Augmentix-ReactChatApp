@@ -23,7 +23,7 @@ export default function Feed({username, videoFilter}) {
       }));
     }
     fetchPosts();
-  },[username, user._id, videoFilter]);
+  },[username, user._id]);
 
     return (
         <div className="feed">

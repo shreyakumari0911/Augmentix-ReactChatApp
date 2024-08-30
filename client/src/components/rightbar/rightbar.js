@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Unfollow, Follow } from '../../context/AuthActions';
+import {getGoogleDriveImageUrl} from "../../utils/imageType";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -80,7 +81,7 @@ export default function Rightbar({ user }) {
           <Link to={`/profile/${friend?.username}`} style={{ textDecoration: "none" }} key={friend._id}>
             <div className="rightbarFollowing">
               <img
-                src={friend?.profilePicture ? PF + friend.profilePicture : PF + "noProfile.jpg"}
+                src={friend?.profilePicture ? friend?.profilePicture : PF + "noProfile.jpg"}
                 alt=""
                 className="rightbarFollowingImg"
               />
