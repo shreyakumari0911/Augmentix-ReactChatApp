@@ -30,20 +30,20 @@ io.on("connection", (socket)=>{
     });
 
     // send message and get message
-    socket.on("sendMessage", ({senderId, receiverId, text, imageUrl, type})=>{
-        const user = getUser(receiverId);
-        console.log(users);
-        console.log("user is sending message", senderId, "receiving message", receiverId, text, user, imageUrl, type);
-        if(user?.socketId){
-            io.to(user?.socketId).emit("getMessage", {
-                senderId, 
-                receiverId,
-                text,
-                imageUrl,
-                type,
-            });
-        }
+   socket.on("sendMessage", ({ senderId, receiverId, text, imageUrl, type }) => {
+  console.log("Sending message", senderId, receiverId, text, imageUrl, type);
+  const user = getUser(receiverId);
+  if (user?.socketId) {
+    console.log("Emitting to", users);
+    io.to(user.socketId).emit("getMessage", {
+      senderId,
+      receiverId,
+      text,
+      imageUrl,
+      type,
     });
+  }
+});
 
     socket.on("disconnected", ()=>{
         console.log("a user Disconnected");
