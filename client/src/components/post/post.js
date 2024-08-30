@@ -156,6 +156,7 @@ export default function Post({post}) {
               }
               return !showEditDelete})}}/>
              {showEditDelete && <UpdateDeleteOption 
+             id={post?._id}
              setShowEditDelete={setShowEditDelete} 
              showEditDelete={showEditDelete} 
              setUpdateModal={setUpdateModal}/>}

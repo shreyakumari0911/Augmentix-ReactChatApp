@@ -1,21 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./post.css";
 import axios from "axios";
 import { Banner } from "../Banner/Banner";
 
-export const UpdateDeleteOption = ({ setShowEditDelete, showEditDelete, setUpdateModal}) => {
+export const UpdateDeleteOption = ({ setShowEditDelete, showEditDelete, setUpdateModal, id}) => {
     const [message, setMessage] = useState(null);
+    const [postId, setPostId] = useState(id);
+    useEffect(()=>{
+        setPostId(id)
+    },[id]);
 
     const deletePost = async () => {
         try {
             // Replace with the actual post ID or other parameters as needed
-            // const res = await axios.delete(`/posts/${post?._id}`);
-            // if (res.status === 200) {
+            const res = await axios.delete(`/posts/${postId}`);
+            if (res.status === 200) {
                 setMessage("Deleted Successfully!!");
                 setTimeout(()=>{
                     setShowEditDelete(false);
                 },[3000]);
-            // }
+            }
         } catch (error) {
             console.error("Error deleting post:", error);
             setMessage("Failed to delete the post.");
