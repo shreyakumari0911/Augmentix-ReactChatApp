@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Favorite } from '@material-ui/icons';
 import './register.css';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import { Visibility, VisibilityOff} from '@material-ui/icons';
+import { Link } from 'react-router-dom/cjs/react-router-dom';
 
 export default function Register() {
     const username=useRef();
@@ -10,6 +12,7 @@ export default function Register() {
     const password = useRef();
     const passwordAgain = useRef();
     const history=useHistory();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleClick= async (e)=>{
 
@@ -44,12 +47,13 @@ export default function Register() {
             </div>
             <div className="loginRight">
                 <form className="loginBox" onSubmit={handleClick}>
-                    <input placeholder="username" ref={username} className="loginInput" minLength="3" maxLength="20" required/>
-                    <input placeholder="email" type="email" ref={email} className="loginInput" required/>
-                    <input placeholder="password" type="password" ref={password} className="loginInput" minLength="6" required/>
-                    <input placeholder="Re-type password" type="password" ref={passwordAgain} minLength="6"  className="loginInput" required/>
+                <div className="loginInput"><input placeholder="username" ref={username} className='input-password' minLength="3" maxLength="20" required/></div>
+                    <div className="loginInput"><input placeholder="email" type="email" className='input-password' ref={email} required/></div>
+                    <div className="loginInput"><input placeholder="password" type={showPassword?"text":"password"} className='input-password' ref={password} minLength="6" required/>
+                    {showPassword ? <div className='icon-eye' onClick={()=>setShowPassword(false)}><VisibilityOff/></div> : <div className='icon-eye' onClick={()=>setShowPassword(true)}><Visibility/></div>}</div>
+                    <div className="loginInput"><input placeholder="Re-type password" type="password" ref={passwordAgain} minLength="6"  className="input-password" required/></div>
                     <button className="loginButton">Sign Up</button>
-                    <button className="loginRegisterButton"> Log into your Account </button>
+                    <Link to="/login"><button className="loginRegisterButton"> Log into your Account </button></Link>
                 </form>
             </div>
         </div>

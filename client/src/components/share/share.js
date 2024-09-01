@@ -3,18 +3,19 @@ import "./share.css";
 import {PermMedia, Label, Room, EmojiEmotions, Cancel} from '@material-ui/icons';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
-import { isImage, isVideo } from '../../utils/imageType';
+import { isImage, isVideo, getGoogleDriveImageUrl } from '../../utils/imageType';
 
 export default function Share() {
-    const {user}=useContext(AuthContext);
-    /*const [user, setUser]=useState({});
-    useEffect(()=>{
-       setUser(JSON.parse(localStorage.getItem("user")));
-       console.log(user);
-    }, []);*/
+    // const {user}=useContext(AuthContext);
+    const [user, setUser] = useState(null);
     const PF=process.env.REACT_APP_PUBLIC_FOLDER;
     const desc=useRef();
     const [file, setFile ]= useState(null);
+    useEffect(()=>{
+        if(localStorage.getItem("user")){
+            setUser(JSON.parse(localStorage.getItem("user")));
+        }
+    },[localStorage.getItem("user")]);
     const submitHandler=async (e)=>{
         e.preventDefault();
         const newPost={
@@ -28,8 +29,13 @@ export default function Share() {
             data.append("file", file);
             newPost.img=filename;
             newPost.type=isImage(filename)?"image": "video"; 
+            
             try{
-                await axios.post("/upload", data);
+                const res = await axios.post("/upload", data);
+                if(res.data.message=="Image uploaded and saved successfully" && res.status==200){
+                    newPost.img=res.data.fileId;
+                    // newPost.type=res.data.mimetype;
+                }
 
             }catch(err){
                 console.log(err);
@@ -47,8 +53,8 @@ export default function Share() {
         <div className="share">
             <div className="shareWrapper">
             <div className="shareTop">
-            <img className="shareProfileImg" src={user.profilePicture? PF+user.profilePicture: PF+"noProfile.jpg"} alt=""/>
-            <input placeholder={"What's in your mind "+user.username+" ?"}  ref={desc} className="shareInput"/>
+            <img className="shareProfileImg" src={user?.profilePicture? user.profilePicture: PF+"noProfile.jpg"} alt=""/>
+            <input placeholder={"What's in your mind "+user?.username+" ?"}  ref={desc} className="shareInput"/>
             </div>
             <hr className="shareHr"/>
             {file && <div>

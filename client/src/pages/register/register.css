@@ -46,11 +46,28 @@
 }
 
 .loginInput{
+    display: flex;
+    align-items: center;
     height: 50px;
     border-radius: 10px;
     border: 1px solid gray;
     font-size: 18px;
+    background: transparent;
+}
+.input-password{
+    height: 50px;
+    width: 90%;
+    border: none;
+    outline: none;
+    padding: 0;
+    border-radius: 10px;
     padding-left: 20px;
+    align-self: stretch;
+    background: transparent;
+}
+
+.icon-eye{
+    padding: 10px;
 }
 
 .loginButton:focus{

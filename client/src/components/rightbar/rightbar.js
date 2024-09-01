@@ -4,17 +4,19 @@ import { Add, Remove } from '@material-ui/icons';
 import axios from 'axios';
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { Unfollow, Follow } from '../../context/AuthActions';
+import {getGoogleDriveImageUrl} from "../../utils/imageType";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(currentUser.following.includes(user?._id));
+  const [followed, setFollowed] = useState(currentUser?.following?.includes(user?._id));
 
   useEffect(() => {
     if(user){
-      setFollowed(currentUser.following.includes(user?._id));
-      console.log("righbar follow","\n login user=",currentUser, "\n profile user = ",user, "\n",currentUser.following.includes(user?._id) );
+      setFollowed(currentUser?.following?.includes(user?._id));
+      // console.log("righbar follow","\n login user=",currentUser, "\n profile user = ",user, "\n",currentUser.following.includes(user?._id) );
     }
   }, [currentUser, user]);
 
@@ -31,16 +33,18 @@ export default function Rightbar({ user }) {
     getFriends();
     }
     
-  }, [user]);
+  }, [user, followed]);
 
   const handleFollowClick = async () => {
     try {
       if (followed && user && currentUser) {
         await axios.put(`/user/${user._id}/unfollow`, { followerId: currentUser._id, followingId: user._id });
-        dispatch({ type: "UNFOLLOW", payload: user._id  });
+        // dispatch({ type: "UNFOLLOW", payload: user._id  });
+        dispatch(Unfollow(user._id))
       } else {
         await axios.put(`/user/${user._id}/follow`, { followerId: currentUser._id, followingId: user._id });
-        dispatch({ type: "FOLLOW", paload: user._id });
+        // dispatch({ type: "FOLLOW", paload: user._id });
+        dispatch(Follow(user._id))
       }
       setFollowed(!followed);
     } catch (err) {
@@ -49,9 +53,9 @@ export default function Rightbar({ user }) {
   };
 
   const ProfileRightbar = () => (
-    <>
+    <div className='profileRight'>
       {user.username !== currentUser.username && (
-        <button className="rightbarFollowButton" onClick={handleFollowClick}>
+        <button className={followed?"rightbarUnfollowButton":"rightbarFollowButton"} onClick={handleFollowClick}>
           {followed ? "Unfollow" : "Follow"}
           {followed ? <Remove /> : <Add />}
         </button>
@@ -77,7 +81,7 @@ export default function Rightbar({ user }) {
           <Link to={`/profile/${friend?.username}`} style={{ textDecoration: "none" }} key={friend._id}>
             <div className="rightbarFollowing">
               <img
-                src={friend?.profilePicture ? PF + friend.profilePicture : PF + "noProfile.jpg"}
+                src={friend?.profilePicture ? friend?.profilePicture : PF + "noProfile.jpg"}
                 alt=""
                 className="rightbarFollowingImg"
               />
@@ -86,7 +90,7 @@ export default function Rightbar({ user }) {
           </Link>
         ))}
       </div>
-    </>
+    </div>
   );
 
   return (
