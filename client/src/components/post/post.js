@@ -19,10 +19,15 @@ export default function Post({post}) {
     const [file, setFile]=useState(null);
     const [updateModal, setUpdateModal] = useState(false);
     const [isliked, setisliked]=useState(false);
-    const [user, setUser]=useState({});
+    const [user, setUser]=useState(null); //user of each post
+    const [currentUser, setCurrentUser] = useState(null); //login user
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-    const {user:currentUser}=useContext(AuthContext);
     const [showEditDelete, setShowEditDelete] = useState(false);
+    useEffect(()=>{
+      if(localStorage.getItem("user")){
+        setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      }
+    },[localStorage.getItem("user")]);
     useEffect(() => {
         const fetchUsers = async ()=>{
           const res=await axios.get(`/user?userId=${post.userId}`);
@@ -78,7 +83,7 @@ export default function Post({post}) {
       }
 },[post?.img]);
       useEffect(()=>{
-        if(user.ProfilePicture){
+        if(user?.ProfilePicture){
           const fetchimage = async ()=>{
             try {
               const res = await axios.get(`/image/${user?.ProfilePicture}`, { responseType: 'blob' }); // Specify response type as 'blob'
@@ -146,7 +151,7 @@ export default function Post({post}) {
              <div className="postWrapper">
              <div className="postTop">
              <div className="postTopLeft"><Link to={`profile/${user?.username}`} style={{textDecoration: "none"}}>
-             <img src={user?.ProfilePicture?profileImage : PF+"noProfile.jpg"} alt={user.ProfilePicture?profileImage : PF+"noProfile.jpg"} className="postProfileImg"/>
+             <img src={profileImage?profileImage : PF+"noProfile.jpg"} alt={profileImage?profileImage : PF+"noProfile.jpg"} className="postProfileImg"/>
              </Link>
              <span className="postUsername">{user?.username} </span> 
              <span className="postDate"> {format(post?.createdAt)}</span></div>
@@ -159,7 +164,8 @@ export default function Post({post}) {
              id={post?._id}
              setShowEditDelete={setShowEditDelete} 
              showEditDelete={showEditDelete} 
-             setUpdateModal={setUpdateModal}/>}
+             setUpdateModal={setUpdateModal} userId={post?.userId}/>}
+             
              </div>
              </div>
              

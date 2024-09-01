@@ -16,7 +16,7 @@ export default function Rightbar({ user }) {
   useEffect(() => {
     if(user){
       setFollowed(currentUser?.following?.includes(user?._id));
-      console.log("righbar follow","\n login user=",currentUser, "\n profile user = ",user, "\n",currentUser.following.includes(user?._id) );
+      // console.log("righbar follow","\n login user=",currentUser, "\n profile user = ",user, "\n",currentUser.following.includes(user?._id) );
     }
   }, [currentUser, user]);
 

@@ -59,20 +59,20 @@ router.post('/login', async (req, res) => {
     }
 
     // Uncomment this section to include JWT generation if needed
-    // const jwtToken = jwt.sign(
-    //   { email: user.email, userId: user._id },
-    //   'longer-secret-is-better',
-    //   { expiresIn: '1h' }
-    // );
+    const jwtToken = jwt.sign(
+      { email: user.email, userId: user._id },
+      'longer-secret-is-better',
+      { expiresIn: '1h' }
+    );
 
-    // res.status(200).json({
-    //   token: jwtToken,
-    //   expiresIn: 3600,
-    //   _id: user._id,
-    //   user: user
-    // });
+    res.status(200).json({
+      token: jwtToken,
+      expiresIn: 3600,
+      _id: user._id,
+      user: user
+    });
 
-    res.status(200).send(user); // Sending the user object as response
+    // res.status(200).send(user); // Sending the user object as response
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).json({ message: 'Internal Server Error' });

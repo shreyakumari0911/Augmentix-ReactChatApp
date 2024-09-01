@@ -6,10 +6,16 @@ import axios from 'axios';
 import { isImage, isVideo, getGoogleDriveImageUrl } from '../../utils/imageType';
 
 export default function Share() {
-    const {user}=useContext(AuthContext);
+    // const {user}=useContext(AuthContext);
+    const [user, setUser] = useState(null);
     const PF=process.env.REACT_APP_PUBLIC_FOLDER;
     const desc=useRef();
     const [file, setFile ]= useState(null);
+    useEffect(()=>{
+        if(localStorage.getItem("user")){
+            setUser(JSON.parse(localStorage.getItem("user")));
+        }
+    },[localStorage.getItem("user")]);
     const submitHandler=async (e)=>{
         e.preventDefault();
         const newPost={
@@ -47,8 +53,8 @@ export default function Share() {
         <div className="share">
             <div className="shareWrapper">
             <div className="shareTop">
-            <img className="shareProfileImg" src={user.profilePicture? user.profilePicture: PF+"noProfile.jpg"} alt=""/>
-            <input placeholder={"What's in your mind "+user.username+" ?"}  ref={desc} className="shareInput"/>
+            <img className="shareProfileImg" src={user?.profilePicture? user.profilePicture: PF+"noProfile.jpg"} alt=""/>
+            <input placeholder={"What's in your mind "+user?.username+" ?"}  ref={desc} className="shareInput"/>
             </div>
             <hr className="shareHr"/>
             {file && <div>

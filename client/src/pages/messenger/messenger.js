@@ -11,7 +11,8 @@ import CloseFriend from '../../components/closefriends/closeFriend';
 import { isImage } from '../../utils/imageType';
 
 export default function Messenger() {
-    const { user } = useContext(AuthContext);
+    // const { user } = useContext(AuthContext);
+    const [user, setUser]=useState(null);
     const [conversationId, setConversationId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
@@ -23,6 +24,12 @@ export default function Messenger() {
     const [friendList, setFriendsList] = useState([]);
     const chatBoxRef = useRef(null);
     const [file, setFile ]= useState(null);
+    useEffect(() => {
+        if(localStorage.getItem("user")){
+          setUser(JSON.parse(localStorage.getItem("user")));
+          console.log(user);
+        }
+      }, [localStorage.getItem("user")]);
 
     const initiateLoadChat = async()=>{
         const res = await axios.get(`/conversation/${user?._id}`); 
@@ -106,13 +113,13 @@ export default function Messenger() {
       }, [messages]);
 
     useEffect(() => {
-        // if(){
+        if(user){
             socket.current.emit("addUser", user?._id);
             socket.current.on("getUsers", (users) => {
             // setOnlineUsers(user.following.filter((f) => users.some((u) => u?.userId === f)));
         });
-        // }
-    }, []);
+        }
+    }, [user]);
 
     useEffect(() => {
         const getMessages = async () => {

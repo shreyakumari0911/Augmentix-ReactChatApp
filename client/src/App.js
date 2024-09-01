@@ -9,36 +9,34 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './context/AuthContext';
 
 function App() {
-  const { user } = useContext(AuthContext);
-  const [currentUser, setCurrentUser] = useState(user);
+  // const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Ensure localStorage is updated whenever 'user' changes
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("auth-user", JSON.stringify(user));
+    if(localStorage.getItem("user")){
+      setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      console.log(currentUser,JSON.parse(localStorage.getItem("user")));
     }
-    setCurrentUser(JSON.parse(localStorage.getItem("auth-user")));
-    console.log(user);
-  }, [user]);
-
+  }, [localStorage.getItem("user")]);
   return (
     <div>
       <Router>
         <Switch>
           <Route exact path="/">
-            {user ? <Home user={currentUser} /> : <Register />}
+            {currentUser ? <Home user={currentUser} /> : <Register />}
           </Route>
           <Route path="/login">
-            {user ? <Redirect to="/" /> : <Login />}
+             <Login />
           </Route>
           <Route path="/register">
-            {user ? <Redirect to="/" /> : <Register />}
+            <Register />
           </Route>
           <Route path="/messenger">
-            {!user ? <Redirect to="/" /> : <Messenger />}
+            {currentUser ?  <Messenger />: <Register/>}
           </Route>
           <Route path="/profile/:username">
-            <Profile user={currentUser}/>
+          <Profile/>
           </Route>
           <Route path="/video">
             <Home user={currentUser} />
